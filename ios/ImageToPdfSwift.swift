@@ -36,5 +36,14 @@ public class ImageToPdfSwift: NSObject {
             rejecter("pdf_error", "Failed to create PDF", error)
         }
     }
+
+    @objc(createPdfFromImagesWithImagePaths:outputPath:resolver:rejecter:)
+    public func createPdfFromImages(imagePaths: [String], outputPath: String, resolver: RCTPromiseResolveBlock, rejecter: RCTPromiseRejectBlock) {
+        self.convertImagesToPdf(imagePaths, outputPath: outputPath, resolver: resolver, rejecter: rejecter)
+    }
+    @objc(multiply:b:)
+    public func multiply(_ a: Double, b: Double) -> NSNumber {
+        return NSNumber(value: a * b)
+    }
 }
 

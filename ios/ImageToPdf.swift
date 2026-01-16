@@ -9,9 +9,8 @@ class ImageToPdf: NSObject, RCTBridgeModule {
         return "ImageToPdf"
     }
 
-    @objc
-
-    // Deprecated: Remove if not needed
+    // Expose multiply to Objective-C and React Native
+    @objc(multiply:b:)
     func multiply(_ a: Double, b: Double) -> NSNumber {
         return NSNumber(value: a * b)
     }
