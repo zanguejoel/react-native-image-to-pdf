@@ -1,10 +1,8 @@
 #import "ImageToPdf.h"
 
-    NSNumber *result = @(a * b);
 
-    return result;
-
-#import "ImageToPdfSwift-Swift.h"
+#import "ImageToPdf-Swift.h"
+#import <React/RCTBridgeModule.h>
 
 @implementation ImageToPdf
 - (NSNumber *)multiply:(double)a b:(double)b {
@@ -12,13 +10,16 @@
     return result;
 }
 
-// Bridge to Swift PDF conversion
-- (void)convertImagesToPdf:(NSArray<NSString *> *)imagePaths
-               outputPath:(NSString *)outputPath
-                  resolve:(RCTPromiseResolveBlock)resolve
-                   reject:(RCTPromiseRejectBlock)reject {
-    ImageToPdfSwift *swiftHelper = [ImageToPdfSwift new];
-    [swiftHelper convertImagesToPdf:imagePaths outputPath:outputPath resolver:resolve rejecter:reject];
+
+
+
+// Bridge to Swift PDF conversion (updated selector)
+- (void)createPdfFromImages:(NSArray<NSString *> *)imagePaths
+                outputPath:(NSString *)outputPath
+                   resolve:(RCTPromiseResolveBlock)resolve
+                    reject:(RCTPromiseRejectBlock)reject {
+    ImageToPdf *swiftHelper = [ImageToPdf new];
+    [swiftHelper createPdfFromImages:imagePaths outputPath:outputPath resolve:resolve reject:reject];
 }
 
 - (std::shared_ptr<facebook::react::TurboModule>)getTurboModule:
@@ -33,3 +34,8 @@
 }
 
 @end
+
+
+
+
+

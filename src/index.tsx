@@ -10,9 +10,9 @@ export function multiply(a: number, b: number): number {
  * @param outputPath Output PDF file path
  * @returns Promise<string> Resolves to outputPath
  */
-export function convertImagesToPdf(
+export function createPdfFromImages(
   imagePaths: string[],
   outputPath: string
 ): Promise<string> {
-  return ImageToPdf.convertImagesToPdf(imagePaths, outputPath);
+  return ImageToPdf.createPdfFromImages(imagePaths, outputPath);
 }
