@@ -1,7 +1,6 @@
 import { TurboModuleRegistry, type TurboModule } from 'react-native';
 
 export interface Spec extends TurboModule {
-  multiply(a: number, b: number): number;
   /**
    * Creates a PDF from an array of image file paths at the given output path.
    * @param imagePaths Array of image file paths
