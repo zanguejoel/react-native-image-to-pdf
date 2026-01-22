@@ -16,8 +16,8 @@
 
 @implementation ImageToPdfObjCBridge
 
-// Export under a unique name to avoid duplicate symbol collisions with other modules
-RCT_EXPORT_MODULE(ImageToPdfBridge);
+// Export with the module name expected by JavaScript
+RCT_EXPORT_MODULE(ImageToPdf);
 
 // Promise-based method callable from JS, forwarding to Swift helper
 RCT_REMAP_METHOD(createPdfFromImages,

@@ -1,4 +1,8 @@
-import { TurboModuleRegistry, type TurboModule } from 'react-native';
+import {
+  TurboModuleRegistry,
+  NativeModules,
+  type TurboModule,
+} from 'react-native';
 
 export interface Spec extends TurboModule {
   /**
@@ -13,4 +17,8 @@ export interface Spec extends TurboModule {
   ): Promise<string>;
 }
 
-export default TurboModuleRegistry.getEnforcing<Spec>('ImageToPdf');
+// Support both TurboModule and legacy NativeModules
+const TurboModule = TurboModuleRegistry.get<Spec>('ImageToPdf');
+const LegacyModule = NativeModules.ImageToPdf;
+
+export default TurboModule ?? LegacyModule;
