@@ -35,24 +35,24 @@ class ImageToPdf: NSObject, RCTBridgeModule {
                 
                 try pdfRenderer.writePDF(to: outputUrl) { context in
                     for path in imagePaths {
-                        var imageUrl = URL(fileURLWithPath: path)
+                        print("[ImageToPdf] Processing image path: \(path)")
                         
-                        // Handle file:// URLs
-                        if path.hasPrefix("file://") {
-                            imageUrl = URL(string: path) ?? URL(fileURLWithPath: path)
-                        }
-                        
-                        print("[ImageToPdf] Attempting to load image from: \(path)")
-                        
-                        // Try to load the image
                         var image: UIImage?
                         
-                        // First try with file path
-                        image = UIImage(contentsOfFile: imageUrl.path)
-                        
-                        // If that fails, try with the original path
-                        if image == nil {
-                            image = UIImage(contentsOfFile: path)
+                        // Try different ways to load the image
+                        if path.hasPrefix("file://") {
+                            // Handle file:// URLs
+                            if let url = URL(string: path), let data = try? Data(contentsOf: url) {
+                                image = UIImage(data: data)
+                            }
+                        } else if path.hasPrefix("/") {
+                            // Direct file path
+                            if FileManager.default.fileExists(atPath: path) {
+                                image = UIImage(contentsOfFile: path)
+                                print("[ImageToPdf] File exists at path: \(path)")
+                            } else {
+                                print("[ImageToPdf] File NOT found at path: \(path)")
+                            }
                         }
                         
                         if let image = image {
@@ -65,6 +65,7 @@ class ImageToPdf: NSObject, RCTBridgeModule {
                                 insideRect: CGRect(x: 0, y: 0, width: 595, height: 842)
                             )
                             
+                            print("[ImageToPdf] Drawing image in rect: \(imageRect)")
                             image.draw(in: imageRect)
                             hasImages = true
                         } else {

@@ -53,35 +53,45 @@ class ImageToPdfModule(reactContext: ReactApplicationContext) :
         
         try {
           val imageFile = getImageFile(imagePath)
-          if (imageFile != null && imageFile.exists()) {
-            Log.d(TAG, "Successfully loaded image file: ${imageFile.absolutePath}")
+          
+          if (imageFile != null) {
+            Log.d(TAG, "Image file path: ${imageFile.absolutePath}")
+            Log.d(TAG, "Image file exists: ${imageFile.exists()}")
+            Log.d(TAG, "Image file size: ${imageFile.length()} bytes")
             
-            // Add image to PDF
-            val imageData = ImageDataFactory.create(imageFile.absolutePath)
-            val image = Image(imageData)
-            
-            // Scale image to fit A4 page (595x842 points)
-            val pageWidth = 595f
-            val pageHeight = 842f
-            val maxWidth = pageWidth - 40  // 20pt margin on each side
-            val maxHeight = pageHeight - 40
-            
-            if (image.imageWidth > maxWidth || image.imageHeight > maxHeight) {
-              val widthScale = maxWidth / image.imageWidth
-              val heightScale = maxHeight / image.imageHeight
-              val scale = min(widthScale, heightScale)
-              image.scale(scale, scale)
+            if (imageFile.exists()) {
+              // Add image to PDF
+              val imageData = ImageDataFactory.create(imageFile.absolutePath)
+              val image = Image(imageData)
+              
+              // Scale image to fit A4 page (595x842 points)
+              val pageWidth = 595f
+              val pageHeight = 842f
+              val maxWidth = pageWidth - 40  // 20pt margin on each side
+              val maxHeight = pageHeight - 40
+              
+              Log.d(TAG, "Original image size: ${image.imageWidth} x ${image.imageHeight}")
+              
+              if (image.imageWidth > maxWidth || image.imageHeight > maxHeight) {
+                val widthScale = maxWidth / image.imageWidth
+                val heightScale = maxHeight / image.imageHeight
+                val scale = min(widthScale, heightScale)
+                image.scale(scale, scale)
+                Log.d(TAG, "Scaled image with factor: $scale")
+              }
+              
+              // Center the image
+              image.setMarginLeft((pageWidth - image.imageWidth) / 2)
+              image.setMarginTop(20f)
+              
+              document.add(image)
+              loadedImages++
+              Log.d(TAG, "Added image to PDF: $imagePath")
+            } else {
+              Log.e(TAG, "Image file does not exist: ${imageFile.absolutePath}")
             }
-            
-            // Center the image
-            image.setMarginLeft((pageWidth - image.imageWidth) / 2)
-            image.setMarginTop(20f)
-            
-            document.add(image)
-            loadedImages++
-            Log.d(TAG, "Added image to PDF: $imagePath")
           } else {
-            Log.e(TAG, "Image file not found or not accessible: $imagePath")
+            Log.e(TAG, "Failed to get image file for: $imagePath")
           }
         } catch (e: Exception) {
           Log.e(TAG, "Error processing image $imagePath: ${e.message}")
@@ -92,8 +102,10 @@ class ImageToPdfModule(reactContext: ReactApplicationContext) :
       // Close the document
       document.close()
       
+      Log.d(TAG, "PDF creation finished with $loadedImages image(s)")
+      
       if (loadedImages > 0) {
-        Log.d(TAG, "PDF created successfully at: $outputPath with $loadedImages image(s)")
+        Log.d(TAG, "PDF created successfully at: $outputPath")
         promise.resolve(outputPath)
       } else {
         promise.reject("no_images", "No images could be loaded from the provided paths")

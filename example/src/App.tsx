@@ -24,14 +24,31 @@ export default function App() {
       });
 
       const fileUri = res[0].uri;
-      console.log('File URI:', fileUri);
+      const fileName = res[0].name || `image_${Date.now()}.jpg`;
+      console.log('Original File URI:', fileUri);
+      console.log('File name:', fileName);
 
-      const imagePaths = [fileUri];
+      // Copy the image to app documents to ensure it persists
       const documentsPath = RNFS.DocumentDirectoryPath;
+      const persistentImagePath = `${documentsPath}/${fileName}`;
+      console.log('Copying image to:', persistentImagePath);
+      await RNFS.copyFile(fileUri, persistentImagePath);
+      console.log('Image copied successfully');
+
+      // Verify the file exists
+      const fileExists = await RNFS.exists(persistentImagePath);
+      console.log('File exists after copy:', fileExists);
+
+      const imagePaths = [persistentImagePath];
       const outputPath = `${documentsPath}/output.pdf`;
+      console.log('Creating PDF with image:', persistentImagePath);
+      console.log('Output path:', outputPath);
       const result = await createPdfFromImages(imagePaths, outputPath);
       setPdfPath(result);
       console.log('PDF created successfully:', result);
+      // Verify PDF exists
+      const pdfExists = await RNFS.exists(result);
+      console.log('PDF exists after creation:', pdfExists);
       Alert.alert('Success', `PDF created successfully`);
     } catch (err) {
       if (DocumentPicker.isCancel(err)) {
